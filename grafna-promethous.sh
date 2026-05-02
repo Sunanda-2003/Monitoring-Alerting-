@@ -47,11 +47,21 @@ sudo systemctl daemon-reexec
 sudo systemctl enable --now prometheus
 
 # ============ 3. Install Grafana ============
-sudo apt-get install -y software-properties-common
-sudo add-apt-repository -y "deb https://packages.grafana.com/oss/deb stable main"
-wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
-sudo apt update
-sudo apt install grafana -y
+# 1. Install dependencies
+sudo apt-get update
+sudo apt-get install -y apt-transport-https wget gnupg
+
+sudo mkdir -p /etc/apt/keyrings
+sudo wget -O /etc/apt/keyrings/grafana.asc https://apt.grafana.com/gpg-full.key
+sudo chmod 644 /etc/apt/keyrings/grafana.asc
+
+echo "deb [signed-by=/etc/apt/keyrings/grafana.asc] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+
+sudo apt-get update
+
+sudo apt-get install -y grafana
+
+sudo systemctl daemon-reexec
 sudo systemctl enable --now grafana-server
 
 # ============ 4. Install Alertmanager ============
