@@ -137,10 +137,17 @@ groups:
       severity: critical
 
   - alert: HighCPUUsage
-    expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 40
-    for: 2m
-    labels:
-      severity: warning
+  expr: 100 - (
+    sum by(instance) (rate(node_cpu_seconds_total{mode="idle"}[1m]))
+    /
+    sum by(instance) (rate(node_cpu_seconds_total[1m]))
+  ) * 100 > 40
+  for: 2m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High CPU usage on {{ $labels.instance }}"
+    description: "CPU usage is above 40% for more than 2 minutes"
 
   - alert: HighDiskUsage
     expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100 > 80
