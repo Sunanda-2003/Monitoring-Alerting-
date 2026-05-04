@@ -3,8 +3,8 @@
 # Monitoring Stack: Prometheus, Grafana, Node Exporter, Alertmanager, and PagerDuty
 
 
-This project provides a simple, script-based setup for a monitoring stack using Prometheus, Grafana, Node Exporter, Alertmanager, and PagerDuty. Each component is managed by a dedicated shell script, making it easy to deploy and run on a Unix-like system. The stack enables not only monitoring and visualization, but also alerting and incident management.
----
+- This project provides a simple, script-based setup for a monitoring stack using Prometheus, Grafana, Node Exporter, Alertmanager, and PagerDuty. Each component is managed by a dedicated shell script, making it easy to deploy and run on a Unix-like system. The stack enables not only monitoring and visualization, but also alerting and incident management.
+
 
 ### 3. Alertmanager
 
