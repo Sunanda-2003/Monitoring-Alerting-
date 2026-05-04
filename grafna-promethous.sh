@@ -128,38 +128,35 @@ EOF
 # ============ 6. Alert Rules (FIXED) ============
 sudo tee /etc/prometheus/alert.rules.yml >/dev/null <<'EOF'
 groups:
-- name: system-alerts
-  rules:
-  - alert: InstanceDown
-    expr: up == 0
-    for: 1m
-    labels:
-      severity: critical
+  - name: system-alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} is down"
+          description: "Prometheus target {{ $labels.instance }} has been unreachable for more than 1 minute."
 
-  - alert: HighCPUUsage
-    expr: >
-      100 - (
-        sum by(instance) (rate(node_cpu_seconds_total{mode="idle"}[1m]))
-        /
-        sum by(instance) (rate(node_cpu_seconds_total[1m]))
-      ) * 100 > 10
-    for: 2m
-    labels:
-      severity: warning
-    annotations:
-      summary: "High CPU usage on {{ $labels.instance }}"
-      description: "CPU usage is above 10% for more than 2 minutes"
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 40
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High CPU usage detected on {{ $labels.instance }}"
+          description: "CPU usage > 20% for more than 2 minutes. VALUE = {{ $value }}%"
 
-  - alert: HighDiskUsage
-    expr: >
-      (1 - (
-        node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} 
-        / 
-        node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}
-      )) * 100 > 80
-    for: 2m
-    labels:
-      severity: warning
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} 
+              / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Disk Usage on {{ $labels.instance }}"
+          description: "Disk usage is above 80% for more than 2 minutes. VALUE = {{ $value }}%"
 EOF
 
 # ============ 7. Prometheus Config ============
