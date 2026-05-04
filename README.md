@@ -189,33 +189,52 @@ GROUP BY InstanceId
   node_cpu_seconds_total{cpu="1"}
   ```
 
-## License
-
-MIT License (or specify your license here)
+### Dashbord Queries
 
 
+- CPU (most used panels)
+- 🔥 Total CPU usage (% per instance)
 ```
-CPU (most used panels)
-🔥 Total CPU usage (% per instance)
 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
-⚡ CPU usage per core
+```
+-⚡ CPU usage per core
+```
 100 - (rate(node_cpu_seconds_total{mode="idle"}[5m]) * 100)
+```
+- 👉 Good for detailed graphs
 
-👉 Good for detailed graphs
-
-🏆 Top 5 high CPU servers
+- 🏆 Top 5 high CPU servers
+- 🧠 Memory
+```
 topk(5, 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100))
-🧠 Memory
-🔥 Memory usage %
+```
+- 🔥 Memory usage %
+```
 (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
-📊 Memory used (GB)
+```
+- 📊 Memory used (GB)
+```
 (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / 1024^3
-💾 Disk
-🔥 Disk usage %
+```
+- 💾 Disk
+- 🔥 Disk usage %
+```
 (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} 
 / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100
-📦 Disk read rate
+```
+- 📦 Disk read rate
+```
 rate(node_disk_read_bytes_total[5m])
-📦 Disk write rate
+```
+- 📦 Disk write rate
+```
 rate(node_disk_written_bytes_total[5m])
+```
+- 🔸 Network Traffic (Incoming)
+```
+rate(node_network_receive_bytes_total[5m])
+```
+- 🔸 Network Traffic (Outgoing)
+```
+rate(node_network_transmit_bytes_total[5m])
 ```
